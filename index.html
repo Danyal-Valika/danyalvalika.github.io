@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Danyal Valika — Operations & Strategy</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg: #0a0a0a;
+  --bg2: #111111;
+  --bg3: #1a1a1a;
+  --border: rgba(255,255,255,0.08);
+  --border2: rgba(255,255,255,0.15);
+  --text: #f0ede8;
+  --muted: #888880;
+  --accent: #c8f060;
+  --accent2: #60f0c8;
+  --font-head: 'Syne', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--text); font-family: var(--font-body); font-size: 15px; line-height: 1.7; overflow-x: hidden; }
+
+nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; padding: 1.25rem 3rem; border-bottom: 1px solid var(--border); background: rgba(10,10,10,0.85); backdrop-filter: blur(16px); }
+.nav-logo { font-family: var(--font-head); font-size: 14px; font-weight: 600; color: var(--text); text-decoration: none; }
+.nav-links { display: flex; gap: 2rem; list-style: none; }
+.nav-links a { font-size: 13px; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+.nav-links a:hover { color: var(--text); }
+
+.hero { min-height: 100vh; position: relative; display: flex; align-items: flex-end; padding: 0 3rem 5rem; border-bottom: 1px solid var(--border); overflow: hidden; }
+.hero-bg { position: absolute; inset: 0; background-image: url('photo1.jpg'); background-size: cover; background-position: center 20%; filter: grayscale(20%) brightness(0.4); z-index: 0; }
+.hero-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(10,10,10,0.97) 35%, rgba(10,10,10,0.25) 100%); z-index: 1; }
+.hero-content { position: relative; z-index: 2; max-width: 750px; }
+.hero h1 { font-family: var(--font-head); font-size: clamp(2.8rem, 5vw, 5rem); font-weight: 700; line-height: 1.05; letter-spacing: -0.02em; margin-bottom: 1.5rem; }
+.hero h1 em { font-style: normal; color: var(--accent); }
+.hero-sub { font-size: 16px; color: var(--muted); max-width: 540px; margin-bottom: 2.5rem; line-height: 1.7; font-weight: 300; }
+.hero-btns { display: flex; gap: 12px; flex-wrap: wrap; }
+.btn { font-family: var(--font-body); font-size: 13px; padding: 10px 24px; border-radius: 999px; cursor: pointer; text-decoration: none; transition: all 0.2s; display: inline-block; }
+.btn-accent { background: var(--accent); color: #0a0a0a; border: none; font-weight: 500; }
+.btn-accent:hover { background: #d4f470; transform: translateY(-1px); }
+.btn-ghost { background: transparent; color: var(--text); border: 1px solid var(--border2); }
+.btn-ghost:hover { border-color: var(--text); transform: translateY(-1px); }
+
+/* STATS 2x2 grid with rolling counter */
+.stats-wrap { border-bottom: 1px solid var(--border); display: grid; grid-template-columns: 1fr 1fr; }
+.stat { padding: 3rem; border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.stat:nth-child(2) { border-right: none; }
+.stat:nth-child(3) { border-bottom: none; }
+.stat:nth-child(4) { border-right: none; border-bottom: none; }
+.stat-num { font-family: var(--font-head); font-size: 3.5rem; font-weight: 700; color: var(--accent); line-height: 1; margin-bottom: 0.6rem; letter-spacing: -0.03em; }
+.stat-suffix { font-size: 2rem; }
+.stat-label { font-size: 13px; color: var(--muted); line-height: 1.6; max-width: 300px; }
+
+section { padding: 5rem 3rem; border-bottom: 1px solid var(--border); }
+.section-label { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 3rem; display: flex; align-items: center; gap: 12px; }
+.section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+/* EXPERIENCE */
+.exp-list { display: flex; flex-direction: column; gap: 3px; }
+.exp-item {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 2.5rem;
+  padding: 3rem;
+  position: relative;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+.exp-item.visible { opacity: 1; transform: translateY(0); }
+.exp-bg {
+  position: absolute; inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: grayscale(80%) brightness(0.1);
+  z-index: 0;
+  transition: filter 0.5s ease;
+}
+.exp-item:hover .exp-bg { filter: grayscale(60%) brightness(0.18); }
+.exp-meta { position: relative; z-index: 1; }
+.exp-body { position: relative; z-index: 1; }
+.exp-date { font-size: 12px; color: var(--muted); margin-bottom: 5px; }
+.exp-company { font-size: 12px; color: rgba(200,240,96,0.55); font-weight: 500; letter-spacing: 0.02em; }
+.exp-role { font-family: var(--font-head); font-size: 18px; font-weight: 700; margin-bottom: 12px; line-height: 1.2; }
+.exp-desc { font-size: 14px; color: var(--muted); line-height: 1.8; font-weight: 300; }
+
+/* PROJECTS */
+.projects-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); }
+.proj-card { background: var(--bg); opacity: 0; transform: translateY(20px); transition: all 0.5s ease; overflow: hidden; }
+.proj-card.visible { opacity: 1; transform: translateY(0); }
+.proj-card:hover { background: var(--bg2); }
+.proj-img { width: 100%; height: 180px; object-fit: cover; filter: grayscale(30%) brightness(0.85); display: block; border-bottom: 1px solid var(--border); transition: filter 0.3s; }
+.proj-card:hover .proj-img { filter: grayscale(10%) brightness(0.95); }
+.proj-content { padding: 1.5rem; }
+.proj-num { font-family: var(--font-head); font-size: 11px; color: var(--muted); letter-spacing: 0.1em; margin-bottom: 0.75rem; }
+.proj-title { font-family: var(--font-head); font-size: 15px; font-weight: 600; margin-bottom: 10px; line-height: 1.3; }
+.proj-desc { font-size: 13px; color: var(--muted); line-height: 1.6; font-weight: 300; }
+.proj-tag { display: inline-block; font-size: 11px; background: var(--bg3); color: var(--muted); padding: 3px 10px; border-radius: 999px; margin-top: 12px; }
+
+/* SKILLS */
+.skills-section { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; }
+.skill-group-title { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 1rem; }
+.skills-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+.skill-pill { font-size: 12px; border: 1px solid var(--border2); color: var(--text); padding: 5px 14px; border-radius: 999px; transition: all 0.2s; cursor: default; }
+.skill-pill:hover { border-color: var(--accent); color: var(--accent); }
+
+/* VOLUNTEER */
+.vol-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.vol-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem; transition: border-color 0.2s; }
+.vol-card:hover { border-color: var(--border2); }
+.vol-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); margin-bottom: 10px; }
+.vol-name { font-family: var(--font-head); font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+.vol-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+/* CONTACT */
+.contact-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
+.contact-heading { font-family: var(--font-head); font-size: clamp(2rem, 4vw, 3.5rem); font-weight: 700; line-height: 1.1; letter-spacing: -0.02em; }
+.contact-heading em { font-style: normal; color: var(--accent); }
+.contact-links { display: flex; flex-direction: column; gap: 12px; margin-top: 2rem; }
+.contact-link { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.25rem; border: 1px solid var(--border); border-radius: 8px; text-decoration: none; color: var(--text); font-size: 14px; transition: all 0.2s; }
+.contact-link:hover { border-color: var(--accent); color: var(--accent); }
+
+footer { padding: 2rem 3rem; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); }
+.footer-name { font-family: var(--font-head); font-size: 13px; color: var(--muted); }
+.footer-right { font-size: 12px; color: var(--muted); }
+
+@keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+.hero-content > * { animation: fadeUp 0.6s ease both; }
+.hero-content > *:nth-child(1) { animation-delay: 0.1s; }
+.hero-content > *:nth-child(2) { animation-delay: 0.25s; }
+.hero-content > *:nth-child(3) { animation-delay: 0.4s; }
+
+@media (max-width: 768px) {
+  nav { padding: 1rem 1.5rem; }
+  .nav-links { gap: 1rem; font-size: 11px; }
+  .hero { padding: 0 1.5rem 4rem; }
+  .stats-wrap { grid-template-columns: 1fr; }
+  .stat { border-right: none; }
+  section { padding: 3rem 1.5rem; }
+  .exp-item { grid-template-columns: 1fr; gap: 0.75rem; padding: 2rem 1.5rem; }
+  .projects-grid { grid-template-columns: 1fr; }
+  .skills-section { grid-template-columns: 1fr; gap: 2rem; }
+  .vol-grid { grid-template-columns: 1fr 1fr; }
+  .contact-inner { grid-template-columns: 1fr; gap: 2rem; }
+  footer { flex-direction: column; gap: 8px; text-align: center; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#" class="nav-logo">DV</a>
+  <ul class="nav-links">
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#volunteer">Volunteer</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <h1>Operations & <em>strategy</em> built for energy & infrastructure</h1>
+    <p class="hero-sub">Business management consultant and project manager with experience in project coordination, data analysis, and sustainability research across global energy teams.</p>
+    <div class="hero-btns">
+      <a href="#projects" class="btn btn-accent">View projects</a>
+      <a href="#contact" class="btn btn-ghost">Get in touch</a>
+    </div>
+  </div>
+</div>
+
+<!-- STATS 2x2 -->
+<div class="stats-wrap">
+  <div class="stat">
+    <div class="stat-num"><span class="counter" data-target="5" data-suffix="+">0</span><span class="stat-suffix">+</span></div>
+    <div class="stat-label">Concurrent projects coordinated across global energy and infrastructure teams</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num"><span class="counter" data-target="60" data-suffix="%">0</span><span class="stat-suffix">%</span></div>
+    <div class="stat-label">Efficiency gain achieved in startup program reporting through process standardization</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num"><span class="counter" data-target="12" data-suffix="+">0</span><span class="stat-suffix">+</span></div>
+    <div class="stat-label">DOEs run on industrial reactors, identifying statistically significant performance correlations and optimizing operational parameters</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num"><span class="counter" data-target="50" data-suffix="%">0</span><span class="stat-suffix">%</span></div>
+    <div class="stat-label">Improvement in project documentation quality through structured reporting frameworks and stakeholder alignment systems</div>
+  </div>
+</div>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="section-label">Experience</div>
+  <div class="exp-list">
+
+    <div class="exp-item">
+      <div class="exp-bg" style="background-image: url('exp1.jpg');"></div>
+      <div class="exp-meta">
+        <div class="exp-date">May 2026 — Present</div>
+        <div class="exp-company">Eversprings Industries LLC</div>
+      </div>
+      <div class="exp-body">
+        <div class="exp-role">Business Operations Project Manager</div>
+        <div class="exp-desc">Supporting Endeavour Energy LLC with cross-functional project coordination and operational reporting. Leading wastewater SWG treatment project as PM, overseeing delivery timelines, vendor coordination, and stakeholder alignment. Spearheading a startup assistance program that achieved a 60% efficiency gain in reporting workflows through process standardization and structured implementation frameworks.</div>
+      </div>
+    </div>
+
+    <div class="exp-item">
+      <div class="exp-bg" style="background-image: url('exp2.jpg');"></div>
+      <div class="exp-meta">
+        <div class="exp-date">Nov 2024 — May 2026</div>
+        <div class="exp-company">Endeavour Energy LLC</div>
+      </div>
+      <div class="exp-body">
+        <div class="exp-role">Project Coordinator</div>
+        <div class="exp-desc">Streamlined project workflows and reporting dashboards across 5+ concurrent projects. Coordinated with global vendors, accounts, and project managers across multiple regions to improve delivery tracking and reduce operational bottlenecks across energy and infrastructure initiatives.</div>
+      </div>
+    </div>
+
+    <div class="exp-item">
+      <div class="exp-bg" style="background-image: url('exp3.jpg');"></div>
+      <div class="exp-meta">
+        <div class="exp-date">Apr 2023 — Oct 2024</div>
+        <div class="exp-company">Endeavour Energy LLC</div>
+      </div>
+      <div class="exp-body">
+        <div class="exp-role">Research Intern</div>
+        <div class="exp-desc">Researched ML applications for carbon emissions calculation, green hydrogen production markets, and methane digestion as a carbon offsetting mechanism. Ran DOEs on industrial reactors identifying statistically significant performance correlations. Contributed to sustainability reporting and carbon sequestration initiatives.</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- CASE STUDIES -->
+<section id="projects">
+  <div class="section-label">Case studies</div>
+  <div class="projects-grid">
+    <div class="proj-card">
+      <img class="proj-img" src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&q=80" alt="Data centers"/>
+      <div class="proj-content">
+        <div class="proj-num">01</div>
+        <div class="proj-title">Data Center Fuel & Temperature Cost Analysis</div>
+        <div class="proj-desc">Fetched and analyzed operational data from cloud data centers across Spain and Portugal, delivering cost optimization insights on fuel consumption and thermal management strategies.</div>
+        <span class="proj-tag">Data & Operations</span>
+      </div>
+    </div>
+    <div class="proj-card">
+      <img class="proj-img" src="https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=800&q=80" alt="Carbon markets"/>
+      <div class="proj-content">
+        <div class="proj-num">02</div>
+        <div class="proj-title">Carbon Credits Market Analysis</div>
+        <div class="proj-desc">Conducted global market research on voluntary carbon credit markets, analyzing pricing structures, verification standards, and trading mechanisms across international regions.</div>
+        <span class="proj-tag">Sustainability</span>
+      </div>
+    </div>
+    <div class="proj-card">
+      <img class="proj-img" src="https://images.unsplash.com/photo-1611273426858-450d8e3c9fce?w=800&q=80" alt="Industrial materials"/>
+      <div class="proj-content">
+        <div class="proj-num">03</div>
+        <div class="proj-title">Graphite Electrode Thermal Conductivity</div>
+        <div class="proj-desc">Researched thermal conductivity properties of graphite electrodes for electric arc furnace applications, analyzing material performance under high-temperature industrial conditions.</div>
+        <span class="proj-tag">Energy Materials</span>
+      </div>
+    </div>
+    <div class="proj-card">
+      <img class="proj-img" src="https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=800&q=80" alt="Plant sequestration"/>
+      <div class="proj-content">
+        <div class="proj-num">04</div>
+        <div class="proj-title">CO₂ Sequestration Using Plants</div>
+        <div class="proj-desc">Investigated plant-based carbon sequestration methods, evaluating biological capture rates and assessing scalability potential for commercial carbon offsetting applications.</div>
+        <span class="proj-tag">Sustainability</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="section-label">Skills</div>
+  <div class="skills-section">
+    <div>
+      <div class="skill-group-title">Business & Operations</div>
+      <div class="skills-pills">
+        <span class="skill-pill">Management Consulting</span>
+        <span class="skill-pill">Business Process Improvement</span>
+        <span class="skill-pill">Stakeholder Management</span>
+        <span class="skill-pill">Project Coordination</span>
+        <span class="skill-pill">Vendor Operations</span>
+        <span class="skill-pill">Carbon Accounting</span>
+        <span class="skill-pill">Operational Reporting</span>
+      </div>
+    </div>
+    <div>
+      <div class="skill-group-title">Technical</div>
+      <div class="skills-pills">
+        <span class="skill-pill">Programming</span>
+        <span class="skill-pill">Data Visualisation</span>
+        <span class="skill-pill">KQL</span>
+        <span class="skill-pill">Microsoft Fabric</span>
+        <span class="skill-pill">Machine Learning</span>
+        <span class="skill-pill">Power BI</span>
+        <span class="skill-pill">JMP</span>
+        <span class="skill-pill">Python</span>
+        <span class="skill-pill">SQL</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VOLUNTEER -->
+<section id="volunteer">
+  <div class="section-label">Volunteer & affiliations</div>
+  <div class="vol-grid">
+    <div class="vol-card">
+      <div class="vol-dot"></div>
+      <div class="vol-name">Indus Health Network</div>
+      <div class="vol-desc">Supporting healthcare access and community health initiatives across Pakistan.</div>
+    </div>
+    <div class="vol-card">
+      <div class="vol-dot"></div>
+      <div class="vol-name">TCF Canada</div>
+      <div class="vol-desc">Affiliated with The Citizens Foundation Canada, advancing education for underserved communities.</div>
+    </div>
+    <div class="vol-card">
+      <div class="vol-dot"></div>
+      <div class="vol-name">Shaukat Khanum</div>
+      <div class="vol-desc">Contributing to cancer care and research at Shaukat Khanum Memorial Cancer Hospital.</div>
+    </div>
+    <div class="vol-card">
+      <div class="vol-dot"></div>
+      <div class="vol-name">CARE Pakistan</div>
+      <div class="vol-desc">Supporting humanitarian and development programs across vulnerable communities in Pakistan.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-label">Contact</div>
+  <div class="contact-inner">
+    <div>
+      <div class="contact-heading">Let's work <em>together</em></div>
+      <p style="color: var(--muted); font-size: 14px; margin-top: 1rem; font-weight: 300;">Open to business operations, project management, and consulting opportunities in energy, infrastructure, and sustainability sectors.</p>
+    </div>
+    <div class="contact-links">
+      <a href="https://www.linkedin.com/in/danyalvalika" class="contact-link" target="_blank">View my LinkedIn ↗</a>
+      <a href="mailto:dvalika7@gmail.com" class="contact-link">Email me →</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span class="footer-name">Danyal Valika — Business Management Consultant & Project Manager</span>
+  <span class="footer-right">© 2026</span>
+</footer>
+
+<script>
+// Intersection observer for fade-in
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry, i) => {
+    if (entry.isIntersecting) setTimeout(() => entry.target.classList.add('visible'), i * 120);
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.exp-item, .proj-card').forEach(el => observer.observe(el));
+
+// Rolling counter animation
+function animateCounter(el) {
+  const target = parseInt(el.dataset.target);
+  const duration = 1800;
+  const start = performance.now();
+  const update = (now) => {
+    const elapsed = now - start;
+    const progress = Math.min(elapsed / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    el.textContent = Math.round(eased * target);
+    if (progress < 1) requestAnimationFrame(update);
+    else el.textContent = target;
+  };
+  requestAnimationFrame(update);
+}
+
+const statObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.querySelectorAll('.counter').forEach(animateCounter);
+      statObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.3 });
+document.querySelectorAll('.stats-wrap').forEach(el => statObserver.observe(el));
+
+// Smooth scroll
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const t = document.querySelector(a.getAttribute('href'));
+    if (t) t.scrollIntoView({ behavior: 'smooth' });
+  });
+});
+</script>
+</body>
+</html>
